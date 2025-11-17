@@ -1,0 +1,59 @@
+:root {
+  --primary-color: #4f46e5; /* indigo-600 */
+  --primary-accent: #6366f1; /* indigo-500 */
+  --secondary-color: #06b6d4; /* cyan-500 */
+  --background-color: #f8fafc; /* cool gray-50 */
+  --surface-color: #ffffff;
+  --text-color: #0f172a;
+  --muted-text: #64748b;
+  --border-color: #e2e8f0;
+}
+
+body {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: var(--text-color);
+  font-family: 'Poppins', 'Inter', sans-serif;
+  letter-spacing: 0.1px;
+}
+
+.navbar {
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79,70,229,0.3);
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  background: var(--surface-color);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+}
+
+h1, h2, h3, h4 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
