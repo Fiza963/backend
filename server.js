@@ -4,6 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Initialize app
 const app = express();
@@ -42,7 +43,7 @@ const teamRoutes = require('./routes/teams');
 const leaderboardRoutes = require('./routes/leaderboard');
 const chatRoutes = require('./routes/chat');
 
-//routes
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/evaluations', evaluationRoutes);
@@ -50,11 +51,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/chat', chatRoutes);
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
 
 // Socket.io connection
 const ChatMessage = require('./models/ChatMessage');
@@ -75,42 +71,26 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async (data) => {
     console.log(' Received message:', data);
-    
     try {
-      // Getting sender info
       const sender = await User.findById(data.senderId);
-      if (!sender) {
-        console.error('Sender not found');
-        return;
-      }
+      if (!sender) return console.error('Sender not found');
 
-      // Creating message
       const message = new ChatMessage({
         sender: data.senderId,
         senderName: sender.name,
         senderRole: sender.role,
         message: data.message
       });
-      
       await message.save();
-      console.log(' Message saved:', message);
 
-      // Preparing message with full data
       const messageData = {
         _id: message._id,
-        sender: {
-          _id: sender._id,
-          name: sender.name,
-          role: sender.role
-        },
+        sender: { _id: sender._id, name: sender.name, role: sender.role },
         message: message.message,
         createdAt: message.createdAt
       };
 
-      // Broadcasting to everyone in support room
       io.to('support-room').emit('newMessage', messageData);
-      console.log(' Message broadcast to support-room');
-      
     } catch (error) {
       console.error(' Send message error:', error);
     }
@@ -120,11 +100,24 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 });
+
+// Serve React frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const { join } = require('path');
+  app.use(express.static(join(__dirname, 'client/build')));
+
+  // Catch-all route to serve index.html
+  app.get('*', (req, res) => {
+    res.sendFile(join(__dirname, 'client/build', 'index.html'));
+  });
+}
+
+// 404 handler for unknown API routes
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Starting server
+// Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);
