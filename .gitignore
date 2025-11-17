@@ -1,2 +1,24 @@
+# Node modules (both root and client)
 node_modules/
+client/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
 .env
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db
+
+# Build folders (React)
+client/build/
+build/
+dist/
+
+# Optional: IDE/editor settings
+.vscode/
+.idea/
